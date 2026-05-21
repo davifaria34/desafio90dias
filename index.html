@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Desafio 90 Dias — Davi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --surface3: #242433;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0eff8;
+    --muted: #7b7a94;
+    --muted2: #5a5972;
+    --accent: #c8ff47;
+    --accent2: #a8e030;
+    --accent-dim: rgba(200,255,71,0.12);
+    --accent-dim2: rgba(200,255,71,0.06);
+    --blue: #5b8fff;
+    --blue-dim: rgba(91,143,255,0.12);
+    --amber: #ffb84d;
+    --amber-dim: rgba(255,184,77,0.12);
+    --red: #ff5f57;
+    --red-dim: rgba(255,95,87,0.1);
+    --purple: #b47fff;
+    --purple-dim: rgba(180,127,255,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --bottom-nav: 72px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  /* ── LAYOUT ── */
+  .app { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; }
+
+  .page { display: none; flex-direction: column; min-height: 100vh; padding-bottom: calc(var(--bottom-nav) + 16px); animation: fadeUp .25s ease; }
+  .page.active { display: flex; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── NAV ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px;
+    height: var(--bottom-nav);
+    background: rgba(19,19,26,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 0 8px 8px;
+    z-index: 100;
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    background: transparent; border: none; cursor: pointer;
+    color: var(--muted);
+    font-family: var(--font); font-size: 10px; font-weight: 500;
+    transition: all .2s;
+    min-width: 64px;
+  }
+  .nav-btn svg { width: 22px; height: 22px; stroke-width: 1.8; transition: all .2s; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn.active svg { stroke: var(--accent); filter: drop-shadow(0 0 6px rgba(200,255,71,0.5)); }
+
+  /* ── HEADER ── */
+  .page-header {
+    padding: 52px 20px 20px;
+    position: relative;
+  }
+  .page-header .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: 42px; letter-spacing: 1px;
+    line-height: 1; color: var(--text);
+  }
+  .page-header .sub {
+    font-size: 13px; color: var(--muted); margin-top: 6px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 0 16px 12px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+
+  /* ── SECTION ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted2);
+    padding: 4px 20px 8px; margin-top: 4px;
+  }
+
+  /* ── HOME PAGE ── */
+  .hero-strip {
+    margin: 0 16px 12px;
+    background: var(--accent);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-strip::before {
+    content: '';
+    position: absolute; top: -30px; right: -20px;
+    width: 120px; height: 120px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 50%;
+  }
+  .hero-strip .dias-num {
+    font-family: var(--font-display);
+    font-size: 64px; color: #0a0a0f; line-height: 1;
+  }
+  .hero-strip .dias-txt {
+    font-size: 12px; font-weight: 600; color: rgba(0,0,0,0.6);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .hero-strip .meta-side { text-align: right; z-index: 1; }
+  .hero-strip .meta-side .meta-label { font-size: 11px; color: rgba(0,0,0,0.55); font-weight: 500; }
+  .hero-strip .meta-side .meta-val { font-size: 22px; font-weight: 600; color: #0a0a0f; }
+
+  /* Progress bar */
+  .prog-wrap { margin: 0 16px 12px; }
+  .prog-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .prog-header span { font-size: 12px; color: var(--muted); }
+  .prog-header strong { font-size: 12px; color: var(--accent); font-weight: 600; }
+  .prog-bg { background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden; }
+  .prog-fill { background: var(--accent); height: 100%; border-radius: 4px; transition: width .5s ease; }
+
+  /* Stats row */
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 0 16px 12px; }
+  .stat-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 10px; text-align: center;
+  }
+  .stat-box .s-num { font-size: 20px; font-weight: 600; color: var(--text); }
+  .stat-box .s-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* Water tracker */
+  .water-card { margin: 0 16px 12px; }
+  .water-cups { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .cup {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1.5px solid var(--border2);
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .15s;
+    font-size: 18px;
+  }
+  .cup.filled { background: var(--blue-dim); border-color: var(--blue); }
+  .cup.filled span { filter: none; }
+  .cup span { filter: grayscale(1) opacity(.3); }
+  .water-meta { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .water-meta strong { color: var(--blue); }
+
+  /* Checklist */
+  .check-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: opacity .15s;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item.done { opacity: .45; }
+  .check-item.done .check-text { text-decoration: line-through; }
+  .check-box {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .check-item.done .check-box { background: var(--accent); border-color: var(--accent); }
+  .check-icon { font-size: 13px; display: none; }
+  .check-item.done .check-icon { display: block; }
+  .check-text { font-size: 14px; color: var(--text); line-height: 1.3; }
+  .check-time { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+  .check-badge {
+    margin-left: auto; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 600; flex-shrink: 0;
+  }
+  .cb-green { background: var(--accent-dim); color: var(--accent); }
+  .cb-blue  { background: var(--blue-dim); color: var(--blue); }
+  .cb-amber { background: var(--amber-dim); color: var(--amber); }
+  .cb-purple { background: var(--purple-dim); color: var(--purple); }
+
+  /* Phase */
+  .phase-bar {
+    margin: 0 16px 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .phase-name { font-size: 13px; font-weight: 600; }
+  .phase-desc { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* ── TREINO PAGE ── */
+  .treino-day-tabs {
+    display: flex; gap: 6px; padding: 0 16px 12px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .treino-day-tabs::-webkit-scrollbar { display: none; }
+  .day-tab {
+    flex-shrink: 0; padding: 7px 14px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .day-tab.active { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 600; }
+
+  .exerc-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .exerc-item:last-child { border-bottom: none; }
+  .exerc-name { font-size: 14px; color: var(--text); }
+  .exerc-sets { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .exerc-pill { font-size: 11px; font-weight: 600; color: var(--accent); background: var(--accent-dim); padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+
+  /* ── PESO PAGE ── */
+  .input-row { display: flex; gap: 10px; align-items: flex-end; }
+  .input-group { flex: 1; }
+  .input-group label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px; }
+  .inp {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    color: var(--text); font-family: var(--font); font-size: 16px;
+    outline: none; transition: border .15s;
+  }
+  .inp:focus { border-color: var(--accent); }
+  .btn-save {
+    background: var(--accent); color: #0a0a0f;
+    border: none; border-radius: var(--radius-sm); padding: 12px 20px;
+    font-family: var(--font); font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: transform .1s;
+    white-space: nowrap;
+  }
+  .btn-save:active { transform: scale(0.97); }
+
+  .history-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid var(--border);
+  }
+  .history-item:last-child { border-bottom: none; }
+  .hist-date { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+  .hist-val { font-size: 16px; font-weight: 600; color: var(--text); }
+  .hist-delta { font-size: 12px; font-weight: 600; }
+  .hist-delta.neg { color: var(--accent); }
+  .hist-delta.pos { color: var(--red); }
+
+  .empty-state { text-align: center; padding: 32px 20px; color: var(--muted); font-size: 13px; }
+  .empty-state .emoji { font-size: 32px; margin-bottom: 10px; }
+
+  /* ── LEITURA PAGE ── */
+  .progress-circle { display: flex; justify-content: center; margin-bottom: 4px; }
+  .circle-wrap { position: relative; width: 120px; height: 120px; }
+  .circle-wrap svg { transform: rotate(-90deg); }
+  .circle-bg { fill: none; stroke: var(--surface2); stroke-width: 10; }
+  .circle-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset .5s ease; }
+  .circle-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+  .circle-num { font-family: var(--font-display); font-size: 28px; color: var(--text); line-height: 1; }
+  .circle-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .leitura-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .leitura-tab {
+    flex: 1; padding: 8px; text-align: center; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: transparent;
+    font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .leitura-tab.active { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+
+  .biblia-plan { max-height: 260px; overflow-y: auto; scrollbar-width: none; }
+  .biblia-plan::-webkit-scrollbar { display: none; }
+  .biblia-week {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+  }
+  .biblia-week:last-child { border-bottom: none; }
+  .bw-name { font-size: 13px; color: var(--text); }
+  .bw-cap  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .bw-check { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .bw-done { background: var(--purple-dim); border-color: var(--purple); color: var(--purple); }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--surface3); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 10px 18px;
+    font-size: 13px; color: var(--text); font-weight: 500;
+    opacity: 0; transition: all .3s; z-index: 200;
+    white-space: nowrap; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══ PAGE: HOME ══ -->
+  <div class="page active" id="pg-home">
+    <div class="page-header">
+      <div class="label">Desafio 90 dias</div>
+      <h1 id="greeting">BOM DIA,<br>DAVI</h1>
+      <div class="sub" id="today-date"></div>
+    </div>
+
+    <div class="hero-strip">
+      <div>
+        <div class="dias-num" id="dias-restantes">107</div>
+        <div class="dias-txt">dias até o altar</div>
+      </div>
+      <div class="meta-side">
+        <div class="meta-label">Fase atual</div>
+        <div class="meta-val" id="fase-atual">1</div>
+        <div class="meta-label" id="fase-nome">Adaptação</div>
+      </div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-header">
+        <span id="prog-dias-label">Progresso do desafio</span>
+        <strong id="prog-pct">0%</strong>
+      </div>
+      <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="s-num" id="stat-peso">—</div>
+        <div class="s-lbl">Peso atual</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="stat-agua">0/8</div>
+        <div class="s-lbl">Copos água</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="stat-tasks">0/0</div>
+        <div class="s-lbl">Tarefas</div>
+      </div>
+    </div>
+
+    <div class="section-label">Rotina de hoje</div>
+    <div class="card">
+      <div id="checklist-home"></div>
+    </div>
+
+    <div class="section-label">Hidratação</div>
+    <div class="card water-card">
+      <div class="card-title">Meta: 8 copos (3L+)</div>
+      <div class="water-cups" id="water-cups"></div>
+      <div class="water-meta" id="water-meta">0 copos · <strong>0ml</strong> de 3000ml</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: TREINO ══ -->
+  <div class="page" id="pg-treino">
+    <div class="page-header">
+      <div class="label">Academia</div>
+      <h1>TREINO</h1>
+      <div class="sub">05:30 – 07:00 · Academia</div>
+    </div>
+
+    <div class="treino-day-tabs" id="treino-tabs"></div>
+
+    <div class="card" id="treino-content"></div>
+
+    <div class="section-label">Casa — noite</div>
+    <div class="card">
+      <div class="card-title">Mobilidade + Postura + Alongamento</div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Mobilidade pélvica — gato/vaca</div><div class="exerc-sets">Quadrúpede, fluxo contínuo</div></div>
+        <div class="exerc-pill">3 min</div>
+      </div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Alongamento isquiotibial</div><div class="exerc-sets">Sentado, alcance dos pés</div></div>
+        <div class="exerc-pill">2x30s</div>
+      </div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Abertura de quadril — pombo</div><div class="exerc-sets">30s por lado</div></div>
+        <div class="exerc-pill">2x30s</div>
+      </div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Wall angel (postura)</div><div class="exerc-sets">Costas na parede</div></div>
+        <div class="exerc-pill">3x10</div>
+      </div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Abertura de peitoral</div><div class="exerc-sets">Cotovelos na parede</div></div>
+        <div class="exerc-pill">2x30s</div>
+      </div>
+      <div class="exerc-item">
+        <div><div class="exerc-name">Respiração diafragmática</div><div class="exerc-sets">Finaliza a sessão</div></div>
+        <div class="exerc-pill">2 min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: PESO ══ -->
+  <div class="page" id="pg-peso">
+    <div class="page-header">
+      <div class="label">Evolução</div>
+      <h1>PESO &<br>MEDIDAS</h1>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Registrar hoje</div>
+      <div class="input-row" style="margin-bottom:10px">
+        <div class="input-group">
+          <label>Peso (kg)</label>
+          <input type="number" step="0.1" class="inp" id="inp-peso" placeholder="79.0">
+        </div>
+        <div class="input-group">
+          <label>Cintura (cm)</label>
+          <input type="number" step="0.5" class="inp" id="inp-cintura" placeholder="82">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Abdômen (cm)</label>
+          <input type="number" step="0.5" class="inp" id="inp-abdomen" placeholder="88">
+        </div>
+        <button class="btn-save" onclick="salvarPeso()">Salvar</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="s-num" id="peso-atual-pg">—</div>
+        <div class="s-lbl">Atual</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="peso-inicio">79 kg</div>
+        <div class="s-lbl">Início</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="peso-perdido">—</div>
+        <div class="s-lbl">Perdido</div>
+      </div>
+    </div>
+
+    <div class="section-label">Histórico</div>
+    <div class="card" id="peso-history">
+      <div class="empty-state"><div class="emoji">⚖️</div>Nenhum registro ainda.<br>Pese toda segunda-feira em jejum.</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: LEITURA ══ -->
+  <div class="page" id="pg-leitura">
+    <div class="page-header">
+      <div class="label">Desenvolvimento</div>
+      <h1>LEITURA</h1>
+      <div class="sub">Almoço: livros · Noite: Bíblia</div>
+    </div>
+
+    <div class="card">
+      <div class="leitura-tabs">
+        <div class="leitura-tab active" id="tab-livros" onclick="switchLeitura('livros')">📚 Livros</div>
+        <div class="leitura-tab" id="tab-biblia" onclick="switchLeitura('biblia')">✝️ Bíblia</div>
+      </div>
+
+      <!-- LIVROS -->
+      <div id="sec-livros">
+        <div class="progress-circle">
+          <div class="circle-wrap">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle class="circle-bg" cx="60" cy="60" r="52"/>
+              <circle class="circle-fill" id="circ-livros" cx="60" cy="60" r="52" stroke="var(--blue)" stroke-dasharray="327" stroke-dashoffset="327"/>
+            </svg>
+            <div class="circle-text">
+              <div class="circle-num" id="livros-num">0</div>
+              <div class="circle-sub">páginas hoje</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-bottom:14px">
+          <div style="font-size:12px; color:var(--muted)">Meta: <strong style="color:var(--blue)">10 páginas/sessão</strong> · 900 pág em 90 dias</div>
+        </div>
+        <div class="input-row">
+          <input type="number" class="inp" id="inp-paginas" placeholder="Páginas lidas hoje" style="flex:1">
+          <button class="btn-save" onclick="salvarPaginas()" style="background:var(--blue)">+</button>
+        </div>
+        <div style="margin-top:14px">
+          <div style="font-size:12px; color:var(--muted); margin-bottom:8px; font-weight:600; letter-spacing:1px; text-transform:uppercase;">Total acumulado</div>
+          <div style="font-size:28px; font-family:var(--font-display); color:var(--text)"><span id="livros-total">0</span> <span style="font-size:14px; color:var(--muted)">páginas</span></div>
+          <div style="font-size:12px; color:var(--muted); margin-top:4px">Meta final: 900 páginas</div>
+          <div class="prog-bg" style="margin-top:8px"><div class="prog-fill" id="livros-prog" style="width:0%; background:var(--blue)"></div></div>
+        </div>
+        <div style="margin-top:14px; padding:12px; background:var(--blue-dim); border-radius:var(--radius-sm); font-size:12px; color:var(--blue);">
+          Me passe sua lista de livros que monto o cronograma personalizado com metas por livro!
+        </div>
+      </div>
+
+      <!-- BÍBLIA -->
+      <div id="sec-biblia" style="display:none">
+        <div class="progress-circle">
+          <div class="circle-wrap">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle class="circle-bg" cx="60" cy="60" r="52"/>
+              <circle class="circle-fill" id="circ-biblia" cx="60" cy="60" r="52" stroke="var(--purple)" stroke-dasharray="327" stroke-dashoffset="327"/>
+            </svg>
+            <div class="circle-text">
+              <div class="circle-num" id="biblia-num">0</div>
+              <div class="circle-sub">semanas</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-bottom:14px">
+          <div style="font-size:12px; color:var(--muted)">Meta: <strong style="color:var(--purple)">3 capítulos/noite</strong> · NT completo em ~90 dias</div>
+        </div>
+        <div class="biblia-plan" id="biblia-plan"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: DIETA ══ -->
+  <div class="page" id="pg-dieta">
+    <div class="page-header">
+      <div class="label">Alimentação</div>
+      <h1>DIETA &<br>CARDÁPIO</h1>
+      <div class="sub">~2.000 kcal · 170g proteína · Carbo controlado</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="s-num">~2000</div><div class="s-lbl">kcal/dia</div></div>
+      <div class="stat-box"><div class="s-num">170g</div><div class="s-lbl">proteína</div></div>
+      <div class="stat-box"><div class="s-num">180g</div><div class="s-lbl">carboidrato</div></div>
+    </div>
+
+    <!-- TABS DIA DA SEMANA -->
+    <div class="treino-day-tabs" id="dieta-tabs"></div>
+
+    <!-- REFEIÇÕES DO DIA -->
+    <div id="dieta-content"></div>
+
+    <div class="section-label">Regras de ouro</div>
+    <div class="card">
+      <div class="list-item" style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; color:var(--text); display:flex; gap:10px; align-items:flex-start">
+        <span style="color:var(--accent); font-weight:700; flex-shrink:0">01</span>
+        <span>Pese os alimentos crus com a balança — especialmente arroz, frango e aveia</span>
+      </div>
+      <div class="list-item" style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; color:var(--text); display:flex; gap:10px; align-items:flex-start">
+        <span style="color:var(--accent); font-weight:700; flex-shrink:0">02</span>
+        <span>Sem arroz branco — troque por arroz integral, batata doce ou mandioca cozida</span>
+      </div>
+      <div class="list-item" style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; color:var(--text); display:flex; gap:10px; align-items:flex-start">
+        <span style="color:var(--accent); font-weight:700; flex-shrink:0">03</span>
+        <span>À noite: zero carboidrato pesado. Só proteína + vegetais</span>
+      </div>
+      <div class="list-item" style="padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; color:var(--text); display:flex; gap:10px; align-items:flex-start">
+        <span style="color:var(--accent); font-weight:700; flex-shrink:0">04</span>
+        <span>3 a 4 litros de água por dia — especialmente nos dias de treino com cardio</span>
+      </div>
+      <div class="list-item" style="padding:8px 0; font-size:13px; color:var(--text); display:flex; gap:10px; align-items:flex-start">
+        <span style="color:var(--accent); font-weight:700; flex-shrink:0">05</span>
+        <span>Domingo pode ter 1 refeição livre moderada — sem exagero, sem culpa</span>
+      </div>
+    </div>
+
+    <div class="section-label">Lista de compras semanal</div>
+    <div class="card">
+      <div class="card-title">Proteínas</div>
+      <div style="font-size:13px; color:var(--text); line-height:2">
+        Frango (filé) · Patinho moído · Atum em água · Tilápia · Ovos (30 un) · Iogurte grego natural · Whey protein (opcional)
+      </div>
+      <div class="card-title" style="margin-top:14px">Carboidratos</div>
+      <div style="font-size:13px; color:var(--text); line-height:2">
+        Arroz integral · Batata doce · Aveia em flocos · Mandioca · Feijão carioca · Banana · Maçã
+      </div>
+      <div class="card-title" style="margin-top:14px">Gorduras boas + temperos</div>
+      <div style="font-size:13px; color:var(--text); line-height:2">
+        Azeite de oliva extra virgem · Ovo inteiro · Amendoim natural (sem sal) · Alho · Limão · Sal · Pimenta · Ervas frescas
+      </div>
+      <div class="card-title" style="margin-top:14px">Vegetais (à vontade)</div>
+      <div style="font-size:13px; color:var(--text); line-height:2">
+        Brócolis · Abobrinha · Pepino · Alface · Rúcula · Tomate · Cenoura · Chuchu
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="goPage('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Hoje
+    </button>
+    <button class="nav-btn" onclick="goPage('treino',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M3 12h18M7 3v4M17 3v4M7 17v4M17 17v4"/></svg>
+      Treino
+    </button>
+    <button class="nav-btn" onclick="goPage('peso',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3a4 4 0 014 4H8a4 4 0 014-4z"/><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M12 12v4M10 14h4"/></svg>
+      Peso
+    </button>
+    <button class="nav-btn" onclick="goPage('leitura',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Leitura
+    </button>
+    <button class="nav-btn" onclick="goPage('dieta',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+      Dieta
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const START = new Date('2026-05-21');
+const WEDDING = new Date('2026-09-05');
+const TOTAL_DAYS = 107;
+
+const TASKS = {
+  manha: [
+    { id:'t1',  time:'05:00', text:'Acordar + 1 copo d\'água', badge:'cb-green', bl:'Manhã' },
+    { id:'t16', time:'05:05', text:'Oração matinal 🙏', badge:'cb-purple', bl:'Manhã' },
+    { id:'t3',  time:'05:15', text:'Saída para a academia', badge:'cb-green', bl:'Manhã' },
+    { id:'t17', time:'05:30', text:'Musculação — treino do dia', badge:'cb-green', bl:'Manhã' },
+    { id:'t18', time:'07:00', text:'Cardio pós-treino — 30 min', badge:'cb-green', bl:'Manhã' },
+    { id:'t4',  time:'07:30', text:'Banho + guasha facial', badge:'cb-blue', bl:'Manhã' },
+    { id:'t2',  time:'07:45', text:'Skincare matinal completo', badge:'cb-blue', bl:'Manhã' },
+    { id:'t5',  time:'08:00', text:'Café da manhã (Refeição 1)', badge:'cb-amber', bl:'Manhã' },
+  ],
+  tarde: [
+    { id:'t6',  time:'11:00', text:'Almoço (Refeição 2)', badge:'cb-amber', bl:'Tarde' },
+    { id:'t19', time:'11:25', text:'Oração do almoço 🙏', badge:'cb-purple', bl:'Tarde' },
+    { id:'t7',  time:'11:35', text:'Leitura — 30 min livro', badge:'cb-blue', bl:'Tarde' },
+    { id:'t8',  time:'12:10', text:'Mewing + postura no trabalho', badge:'cb-purple', bl:'Tarde' },
+  ],
+  noite: [
+    { id:'t9',  time:'18:00', text:'Lanche proteico (Refeição 3)', badge:'cb-amber', bl:'Noite' },
+    { id:'t10', time:'18:30', text:'Corrida / caminhada 30–45 min', badge:'cb-green', bl:'Noite' },
+    { id:'t11', time:'19:30', text:'Mobilidade + alongamento casa', badge:'cb-purple', bl:'Noite' },
+    { id:'t12', time:'20:00', text:'Jantar (Refeição 4)', badge:'cb-amber', bl:'Noite' },
+    { id:'t13', time:'20:30', text:'Leitura Bíblia — 3 capítulos', badge:'cb-blue', bl:'Noite' },
+    { id:'t14', time:'21:00', text:'Skincare noturno', badge:'cb-blue', bl:'Noite' },
+    { id:'t20', time:'21:30', text:'Oração da noite 🙏', badge:'cb-purple', bl:'Noite' },
+    { id:'t15', time:'22:00', text:'Dormir', badge:'cb-green', bl:'Noite' },
+  ]
+};
+
+const TREINOS = {
+  'Seg': {
+    nome: 'Peito + Tríceps', tipo: 'Push + Cardio',
+    exercicios: [
+      { n:'Supino reto com halteres', s:'4x 10–12 reps', t:'Compostos' },
+      { n:'Crucifixo inclinado', s:'3x 12 reps', t:'Compostos' },
+      { n:'Crossover na polia', s:'3x 15 reps', t:'Isolador' },
+      { n:'Flexão de braço fechada', s:'3x falha', t:'Composto' },
+      { n:'Tríceps corda na polia', s:'4x 12 reps', t:'Isolador' },
+      { n:'Tríceps testa', s:'3x 12 reps', t:'Isolador' },
+      { n:'Prancha abdominal', s:'3x 40s', t:'Core' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Esteira / bicicleta / elíptico', s:'30 min moderado', t:'Cardio' },
+    ]
+  },
+  'Ter': {
+    nome: 'Costas + Bíceps', tipo: 'Pull + Cardio',
+    exercicios: [
+      { n:'Puxada frontal aberta', s:'4x 10–12 reps', t:'Composto' },
+      { n:'Remada curvada com barra', s:'4x 10 reps', t:'Composto' },
+      { n:'Remada unilateral haltere', s:'3x 12 reps/lado', t:'Composto' },
+      { n:'Puxada fechada', s:'3x 12 reps', t:'Composto' },
+      { n:'Rosca direta com barra', s:'4x 12 reps', t:'Isolador' },
+      { n:'Rosca martelo alternada', s:'3x 12 reps', t:'Isolador' },
+      { n:'Abdominal infra (elevação pernas)', s:'3x 15 reps', t:'Core' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Esteira / bicicleta / elíptico', s:'30 min moderado', t:'Cardio' },
+    ]
+  },
+  'Qua': {
+    nome: 'Ombro + Abdômen', tipo: 'Core + Cardio',
+    exercicios: [
+      { n:'Desenvolvimento halteres sentado', s:'4x 10–12 reps', t:'Composto' },
+      { n:'Elevação lateral', s:'4x 15 reps', t:'Isolador' },
+      { n:'Elevação frontal alternada', s:'3x 12 reps', t:'Isolador' },
+      { n:'Encolhimento (trapézio)', s:'3x 15 reps', t:'Isolador' },
+      { n:'Prancha lateral', s:'3x 30s/lado', t:'Core' },
+      { n:'Abdominal crunch com rotação', s:'3x 20 reps', t:'Core' },
+      { n:'Abdominal bicicleta', s:'3x 20 reps', t:'Core' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Esteira / bicicleta / elíptico', s:'30 min moderado', t:'Cardio' },
+    ]
+  },
+  'Qui': {
+    nome: 'Perna completa', tipo: 'Legs (1x/sem) + Cardio',
+    exercicios: [
+      { n:'Agachamento livre', s:'4x 10–12 reps', t:'Composto' },
+      { n:'Leg press 45°', s:'4x 12 reps', t:'Composto' },
+      { n:'Avanço alternado', s:'3x 12 reps/lado', t:'Composto' },
+      { n:'Extensão de perna', s:'3x 15 reps', t:'Isolador' },
+      { n:'Mesa flexora (posterior)', s:'3x 15 reps', t:'Isolador' },
+      { n:'Panturrilha em pé', s:'4x 20 reps', t:'Isolador' },
+      { n:'Abdutor na máquina', s:'3x 15 reps', t:'Isolador' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Bicicleta ou elíptico (poupando pernas)', s:'30 min leve-moderado', t:'Cardio' },
+    ]
+  },
+  'Sex': {
+    nome: 'Peito + Tríceps', tipo: 'Push 2 + Cardio',
+    exercicios: [
+      { n:'Supino inclinado halteres', s:'4x 10–12 reps', t:'Composto' },
+      { n:'Mergulho entre bancos', s:'3x falha', t:'Composto' },
+      { n:'Crossover em W (polia)', s:'3x 15 reps', t:'Isolador' },
+      { n:'Tríceps unilateral polia', s:'4x 12 reps/lado', t:'Isolador' },
+      { n:'Tríceps kickback', s:'3x 15 reps', t:'Isolador' },
+      { n:'Prancha dinâmica', s:'3x 8 reps', t:'Core' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Esteira / bicicleta / elíptico', s:'30 min moderado', t:'Cardio' },
+    ]
+  },
+  'Sáb': {
+    nome: 'Costas + Bíceps + Abdômen', tipo: 'Pull 2 · Sessão completa',
+    exercicios: [
+      { n:'Barra fixa (ou assistida)', s:'4x máximo', t:'Composto' },
+      { n:'Remada cavalinho / serrote', s:'4x 10 reps', t:'Composto' },
+      { n:'Puxada supinada', s:'3x 12 reps', t:'Composto' },
+      { n:'Rosca concentrada', s:'3x 12 reps/lado', t:'Isolador' },
+      { n:'Rosca 21 (barra)', s:'3x 21 reps', t:'Isolador' },
+      { n:'Superman (lombar)', s:'3x 15 reps', t:'Core' },
+      { n:'── ABDÔMEN ──', s:'', t:'──────────' },
+      { n:'Prancha abdominal', s:'4x 45s', t:'Core' },
+      { n:'Crunch com rotação', s:'3x 20 reps', t:'Core' },
+      { n:'Elevação de pernas', s:'3x 15 reps', t:'Core' },
+      { n:'Abdominal bicicleta', s:'3x 20 reps', t:'Core' },
+      { n:'── CARDIO ──', s:'30 min pós-treino', t:'──────────' },
+      { n:'Esteira / bicicleta / elíptico', s:'30 min moderado', t:'Cardio' },
+    ]
+  },
+  'Dom': {
+    nome: 'Descanso Total', tipo: 'Recuperação ativa',
+    exercicios: [
+      { n:'Caminhada leve opcional', s:'20–30 min', t:'Cardio leve' },
+      { n:'Leitura + Bíblia', s:'Sem limite', t:'Mental' },
+      { n:'Hidratação reforçada', s:'3L+', t:'Saúde' },
+    ]
+  }
+};
+
+const BIBLIA_PLAN = [
+  { s:1, livro:'Mateus 1–21', cap:'21 capítulos' },
+  { s:2, livro:'Mateus 22–28 + Marcos 1–14', cap:'21 capítulos' },
+  { s:3, livro:'Marcos 15–16 + Lucas 1–19', cap:'21 capítulos' },
+  { s:4, livro:'Lucas 20–24 + João 1–16', cap:'21 capítulos' },
+  { s:5, livro:'João 17–21 + Atos 1–16', cap:'21 capítulos' },
+  { s:6, livro:'Atos 17–28 + Romanos 1–9', cap:'21 capítulos' },
+  { s:7, livro:'Romanos 10–16 + 1Co 1–14', cap:'21 capítulos' },
+  { s:8, livro:'1Co 15–16 + 2Co + Gál', cap:'21 capítulos' },
+  { s:9, livro:'Efés + Fil + Col + 1–2Ts', cap:'21 capítulos' },
+  { s:10, livro:'1–2Tm + Tt + Fm + Hb 1–10', cap:'21 capítulos' },
+  { s:11, livro:'Hb 11–13 + Tg + 1–2Pe + 1–3Jo + Jd', cap:'21 capítulos' },
+  { s:12, livro:'Apocalipse completo (revisão)', cap:'22 capítulos' },
+  { s:13, livro:'Revisão + releitura favorita', cap:'Livre' },
+];
+
+// ── STORAGE ──
+function save(k,v) { try { localStorage.setItem('d90_'+k, JSON.stringify(v)); } catch(e){} }
+function load(k,d) { try { const v=localStorage.getItem('d90_'+k); return v?JSON.parse(v):d; } catch(e){return d;} }
+
+function todayKey() {
+  const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  initHome();
+  initTreino();
+  initPeso();
+  initLeitura();
+});
+
+function initHome() {
+  const now = new Date();
+  const h = now.getHours();
+  const greet = h < 12 ? 'BOM DIA' : h < 18 ? 'BOA TARDE' : 'BOA NOITE';
+  document.getElementById('greeting').innerHTML = `${greet},<br>DAVI`;
+
+  const opts = { weekday:'long', day:'numeric', month:'long' };
+  document.getElementById('today-date').textContent = now.toLocaleDateString('pt-BR', opts);
+
+  // countdown
+  const diff = Math.ceil((WEDDING - now) / 86400000);
+  document.getElementById('dias-restantes').textContent = diff;
+
+  // progress
+  const elapsed = Math.floor((now - START) / 86400000);
+  const pct = Math.min(100, Math.round((elapsed / TOTAL_DAYS) * 100));
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-dias-label').textContent = `Dia ${elapsed} de 90`;
+
+  // fase
+  let fase=1, faseNome='Adaptação';
+  if (elapsed >= 60) { fase=3; faseNome='Definição'; }
+  else if (elapsed >= 30) { fase=2; faseNome='Intensif.'; }
+  document.getElementById('fase-atual').textContent = fase;
+  document.getElementById('fase-nome').textContent = faseNome;
+
+  // peso stat
+  const hist = load('peso_hist', []);
+  if (hist.length) {
+    document.getElementById('stat-peso').textContent = hist[hist.length-1].p + ' kg';
+  }
+
+  // checklist
+  renderChecklist();
+
+  // water
+  renderWater();
+}
+
+function renderChecklist() {
+  const key = todayKey();
+  const done = load('tasks_'+key, {});
+  const all = [...TASKS.manha, ...TASKS.tarde, ...TASKS.noite];
+  const doneCnt = all.filter(t => done[t.id]).length;
+  document.getElementById('stat-tasks').textContent = `${doneCnt}/${all.length}`;
+
+  let html = '';
+  const sections = [
+    { label: 'Manhã', items: TASKS.manha },
+    { label: 'Tarde / Trabalho', items: TASKS.tarde },
+    { label: 'Noite', items: TASKS.noite },
+  ];
+  sections.forEach(sec => {
+    html += `<div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);padding:4px 0 8px">${sec.label}</div>`;
+    sec.items.forEach(t => {
+      const isDone = done[t.id];
+      html += `<div class="check-item${isDone?' done':''}" onclick="toggleTask('${t.id}')">
+        <div class="check-box"><div class="check-icon">✓</div></div>
+        <div style="flex:1">
+          <div class="check-text">${t.text}</div>
+          <div class="check-time">${t.time}</div>
+        </div>
+        <div class="check-badge ${t.badge}">${t.bl}</div>
+      </div>`;
+    });
+  });
+  document.getElementById('checklist-home').innerHTML = html;
+}
+
+function toggleTask(id) {
+  const key = todayKey();
+  const done = load('tasks_'+key, {});
+  done[id] = !done[id];
+  save('tasks_'+key, done);
+  renderChecklist();
+  const all = [...TASKS.manha, ...TASKS.tarde, ...TASKS.noite];
+  const doneCnt = all.filter(t => done[t.id]).length;
+  if (doneCnt === all.length) showToast('🔥 Rotina completa! Incrível, Davi!');
+}
+
+function renderWater() {
+  const key = todayKey();
+  const cups = load('water_'+key, 0);
+  document.getElementById('stat-agua').textContent = `${cups}/8`;
+  let html = '';
+  for (let i=0;i<8;i++) {
+    html += `<div class="cup${i<cups?' filled':''}" onclick="addWater(${i})"><span>💧</span></div>`;
+  }
+  document.getElementById('water-cups').innerHTML = html;
+  const ml = cups * 375;
+  document.getElementById('water-meta').innerHTML = `${cups} copos · <strong>${ml}ml</strong> de 3000ml`;
+}
+
+function addWater(idx) {
+  const key = todayKey();
+  let cups = load('water_'+key, 0);
+  cups = (idx < cups) ? idx : idx + 1;
+  cups = Math.min(8, cups);
+  save('water_'+key, cups);
+  renderWater();
+  if (cups >= 8) showToast('💧 Meta de hidratação batida!');
+}
+
+// ── TREINO ──
+const DIAS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+
+function initTreino() {
+  const today = new Date().getDay(); // 0=Dom
+  const map = [6,0,1,2,3,4,5]; // JS sun=0 → index
+  const todayIdx = map[today];
+
+  let tabs = '';
+  DIAS.forEach((d,i) => {
+    tabs += `<div class="day-tab${i===todayIdx?' active':''}" onclick="showTreino('${d}',this)">${d}</div>`;
+  });
+  document.getElementById('treino-tabs').innerHTML = tabs;
+  showTreinoData(DIAS[todayIdx]);
+}
+
+function showTreino(dia, el) {
+  document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  showTreinoData(dia);
+}
+
+function showTreinoData(dia) {
+  const t = TREINOS[dia];
+  let html = `<div style="margin-bottom:12px"><div style="font-family:var(--font-display);font-size:28px;color:var(--text)">${t.nome}</div><div style="font-size:12px;color:var(--muted);margin-top:2px">${t.tipo}</div></div>`;
+  t.exercicios.forEach(e => {
+    html += `<div class="exerc-item">
+      <div><div class="exerc-name">${e.n}</div><div class="exerc-sets">${e.t}</div></div>
+      <div class="exerc-pill">${e.s}</div>
+    </div>`;
+  });
+  document.getElementById('treino-content').innerHTML = html;
+}
+
+// ── PESO ──
+function initPeso() {
+  renderPesoHistory();
+}
+
+function salvarPeso() {
+  const p = parseFloat(document.getElementById('inp-peso').value);
+  const c = parseFloat(document.getElementById('inp-cintura').value);
+  const a = parseFloat(document.getElementById('inp-abdomen').value);
+  if (!p) { showToast('Informe o peso!'); return; }
+  const hist = load('peso_hist', []);
+  const now = new Date();
+  hist.push({ p, c:c||null, a:a||null, d: now.toLocaleDateString('pt-BR') });
+  save('peso_hist', hist);
+  document.getElementById('inp-peso').value='';
+  document.getElementById('inp-cintura').value='';
+  document.getElementById('inp-abdomen').value='';
+  renderPesoHistory();
+  showToast('✅ Registrado!');
+}
+
+function renderPesoHistory() {
+  const hist = load('peso_hist', []);
+  const inicio = 79;
+  if (hist.length) {
+    const last = hist[hist.length-1];
+    document.getElementById('stat-peso').textContent = last.p + ' kg';
+    document.getElementById('peso-atual-pg').textContent = last.p + ' kg';
+    const perdido = (inicio - last.p).toFixed(1);
+    document.getElementById('peso-perdido').textContent = (perdido > 0 ? '-' : '+') + Math.abs(perdido) + ' kg';
+  }
+
+  if (!hist.length) {
+    document.getElementById('peso-history').innerHTML = '<div class="empty-state"><div class="emoji">⚖️</div>Nenhum registro ainda.<br>Pese toda segunda-feira em jejum.</div>';
+    return;
+  }
+
+  let html = '';
+  [...hist].reverse().forEach((r, i) => {
+    const prev = hist[hist.length - 1 - i - 1];
+    let delta = '';
+    if (prev) {
+      const d = (r.p - prev.p).toFixed(1);
+      const cls = d <= 0 ? 'neg' : 'pos';
+      delta = `<div class="hist-delta ${cls}">${d > 0 ? '+' : ''}${d} kg</div>`;
+    }
+    html += `<div class="history-item">
+      <div>
+        <div class="hist-date">${r.d}</div>
+        ${r.c ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">Cintura: ${r.c}cm${r.a?' · Abd: '+r.a+'cm':''}</div>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        ${delta}
+        <div class="hist-val">${r.p} kg</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('peso-history').innerHTML = html;
+}
+
+// ── LEITURA ──
+function initLeitura() {
+  renderLivros();
+  renderBiblia();
+}
+
+function switchLeitura(tab) {
+  document.getElementById('sec-livros').style.display = tab==='livros'?'':'none';
+  document.getElementById('sec-biblia').style.display  = tab==='biblia'?'':'none';
+  document.getElementById('tab-livros').classList.toggle('active', tab==='livros');
+  document.getElementById('tab-biblia').classList.toggle('active', tab==='biblia');
+}
+
+function salvarPaginas() {
+  const n = parseInt(document.getElementById('inp-paginas').value);
+  if (!n || n < 1) { showToast('Informe as páginas!'); return; }
+  let total = load('livros_total', 0);
+  total += n;
+  save('livros_total', total);
+  document.getElementById('inp-paginas').value = '';
+  renderLivros();
+  showToast(`📚 +${n} páginas registradas!`);
+}
+
+function renderLivros() {
+  const total = load('livros_total', 0);
+  const hoje = load('livros_hoje_'+todayKey(), 0);
+  document.getElementById('livros-total').textContent = total;
+  document.getElementById('livros-num').textContent = hoje;
+  const pct = Math.min(100, (total / 900) * 100);
+  document.getElementById('livros-prog').style.width = pct + '%';
+  const offset = 327 - (327 * Math.min(hoje, 10) / 10);
+  document.getElementById('circ-livros').style.strokeDashoffset = offset;
+}
+
+function renderBiblia() {
+  const done = load('biblia_done', {});
+  const doneCnt = Object.values(done).filter(Boolean).length;
+  document.getElementById('biblia-num').textContent = doneCnt;
+  const offset = 327 - (327 * doneCnt / BIBLIA_PLAN.length);
+  document.getElementById('circ-biblia').style.strokeDashoffset = offset;
+
+  let html = '';
+  BIBLIA_PLAN.forEach(s => {
+    const isDone = done['s'+s.s];
+    html += `<div class="biblia-week" onclick="toggleBiblia('s${s.s}')">
+      <div>
+        <div class="bw-name" style="${isDone?'text-decoration:line-through;color:var(--muted)':''}">Sem ${s.s}: ${s.livro}</div>
+        <div class="bw-cap">${s.cap}</div>
+      </div>
+      <div class="bw-check${isDone?' bw-done':''}">${isDone?'✓':''}</div>
+    </div>`;
+  });
+  document.getElementById('biblia-plan').innerHTML = html;
+}
+
+function toggleBiblia(key) {
+  const done = load('biblia_done', {});
+  done[key] = !done[key];
+  save('biblia_done', done);
+  renderBiblia();
+}
+
+// ── UTILS ──
+function goPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── DIETA ──
+const CARDAPIO = {
+  'Seg': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã pós-treino', itens:[
+      {i:'Ovos mexidos ou estrelados', q:'3 unidades'},
+      {i:'Frango desfiado ou atum', q:'100g'},
+      {i:'Arroz integral cozido', q:'60g (cru)'},
+      {i:'Azeite de oliva', q:'1 col. sopa'},
+      {i:'Café preto sem açúcar', q:'livre'},
+    ], kcal:'~520 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Frango grelhado', q:'200g'},
+      {i:'Arroz integral', q:'80g (cru)'},
+      {i:'Feijão carioca', q:'3 col. sopa'},
+      {i:'Salada verde + legumes', q:'à vontade'},
+      {i:'Azeite para temperar', q:'1 fio'},
+    ], kcal:'~620 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 18:00', nome:'Lanche pré-noite', itens:[
+      {i:'Iogurte grego natural', q:'200g'},
+      {i:'Banana', q:'1 unidade'},
+      {i:'Amendoim natural', q:'30g'},
+    ], kcal:'~320 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 20:00', nome:'Jantar', itens:[
+      {i:'Tilápia ou frango grelhado', q:'180g'},
+      {i:'Brócolis ou abobrinha refogada', q:'200g'},
+      {i:'Ovo cozido', q:'2 unidades'},
+      {i:'Azeite + temperos', q:'1 fio'},
+    ], kcal:'~420 kcal', cor:'var(--purple)'},
+  ],
+  'Ter': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã', itens:[
+      {i:'Omelete de 3 ovos + atum', q:'3 ovos + 1 lata'},
+      {i:'Batata doce cozida', q:'80g'},
+      {i:'Café preto', q:'livre'},
+    ], kcal:'~500 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Patinho moído grelhado', q:'200g'},
+      {i:'Mandioca cozida', q:'100g'},
+      {i:'Salada com azeite', q:'à vontade'},
+    ], kcal:'~580 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 18:00', nome:'Lanche', itens:[
+      {i:'Iogurte grego', q:'200g'},
+      {i:'Maçã', q:'1 unidade'},
+    ], kcal:'~260 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 20:00', nome:'Jantar', itens:[
+      {i:'Atum em água', q:'2 latas (280g)'},
+      {i:'Ovo cozido', q:'2 unidades'},
+      {i:'Salada verde + tomate', q:'à vontade'},
+    ], kcal:'~380 kcal', cor:'var(--purple)'},
+  ],
+  'Qua': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã', itens:[
+      {i:'Ovos mexidos', q:'3 unidades'},
+      {i:'Frango desfiado', q:'100g'},
+      {i:'Aveia em flocos', q:'40g com água ou leite desnatado'},
+      {i:'Café preto', q:'livre'},
+    ], kcal:'~510 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Frango grelhado', q:'200g'},
+      {i:'Arroz integral', q:'80g (cru)'},
+      {i:'Lentilha', q:'3 col. sopa'},
+      {i:'Salada + azeite', q:'à vontade'},
+    ], kcal:'~600 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 18:00', nome:'Lanche', itens:[
+      {i:'Iogurte grego', q:'200g'},
+      {i:'Banana', q:'1 unidade'},
+    ], kcal:'~270 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 20:00', nome:'Jantar', itens:[
+      {i:'Tilápia grelhada', q:'200g'},
+      {i:'Abobrinha + cenoura refogada', q:'200g'},
+      {i:'Ovo cozido', q:'1 unidade'},
+    ], kcal:'~370 kcal', cor:'var(--purple)'},
+  ],
+  'Qui': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã (dia de perna)', itens:[
+      {i:'Ovos mexidos', q:'3 unidades'},
+      {i:'Frango', q:'100g'},
+      {i:'Batata doce', q:'100g — carboidrato extra para perna'},
+      {i:'Café preto', q:'livre'},
+    ], kcal:'~560 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Frango ou patinho', q:'200g'},
+      {i:'Arroz integral', q:'100g (cru) — extra para recuperação'},
+      {i:'Feijão', q:'3 col. sopa'},
+      {i:'Salada + azeite', q:'à vontade'},
+    ], kcal:'~680 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 18:00', nome:'Lanche', itens:[
+      {i:'Iogurte grego', q:'200g'},
+      {i:'Amendoim', q:'30g'},
+    ], kcal:'~300 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 20:00', nome:'Jantar', itens:[
+      {i:'Frango grelhado', q:'180g'},
+      {i:'Brócolis', q:'200g'},
+      {i:'Ovo cozido', q:'2 unidades'},
+    ], kcal:'~400 kcal', cor:'var(--purple)'},
+  ],
+  'Sex': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã', itens:[
+      {i:'Omelete de frango (3 ovos)', q:'3 ovos + 80g frango'},
+      {i:'Arroz integral', q:'60g (cru)'},
+      {i:'Café preto', q:'livre'},
+    ], kcal:'~490 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Frango grelhado', q:'200g'},
+      {i:'Batata doce cozida', q:'120g'},
+      {i:'Salada verde + azeite', q:'à vontade'},
+    ], kcal:'~560 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 18:00', nome:'Lanche', itens:[
+      {i:'Iogurte grego', q:'200g'},
+      {i:'Maçã ou banana', q:'1 unidade'},
+    ], kcal:'~260 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 20:00', nome:'Jantar', itens:[
+      {i:'Atum + ovo cozido', q:'2 latas + 2 ovos'},
+      {i:'Pepino + tomate + rúcula', q:'à vontade'},
+      {i:'Azeite + limão', q:'temperar'},
+    ], kcal:'~360 kcal', cor:'var(--purple)'},
+  ],
+  'Sáb': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã (sábado — sessão longa)', itens:[
+      {i:'Ovos mexidos', q:'4 unidades'},
+      {i:'Frango desfiado', q:'120g'},
+      {i:'Batata doce', q:'100g'},
+      {i:'Café preto', q:'livre'},
+    ], kcal:'~620 kcal', cor:'var(--amber)'},
+    { ref:'Refeição 2 · 11:00', nome:'Almoço', itens:[
+      {i:'Frango ou patinho', q:'220g'},
+      {i:'Arroz integral', q:'80g (cru)'},
+      {i:'Feijão', q:'3 col. sopa'},
+      {i:'Salada à vontade', q:'azeite + limão'},
+    ], kcal:'~640 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 15:00', nome:'Lanche da tarde', itens:[
+      {i:'Iogurte grego', q:'200g'},
+      {i:'Amendoim', q:'30g'},
+      {i:'Fruta', q:'1 unidade'},
+    ], kcal:'~330 kcal', cor:'var(--blue)'},
+    { ref:'Refeição 4 · 19:00', nome:'Jantar', itens:[
+      {i:'Tilápia ou frango', q:'200g'},
+      {i:'Legumes refogados', q:'200g'},
+      {i:'Ovo cozido', q:'2 unidades'},
+    ], kcal:'~400 kcal', cor:'var(--purple)'},
+  ],
+  'Dom': [
+    { ref:'Refeição 1 · 08:00', nome:'Café da manhã (domingo)', itens:[
+      {i:'Ovos mexidos', q:'3 unidades'},
+      {i:'Frango ou atum', q:'100g'},
+      {i:'Pão integral (1 fatia — opcional)', q:'1 fatia'},
+      {i:'Café preto ou com leite desnatado', q:'livre'},
+    ], kcal:'~480 kcal', cor:'var(--amber)'},
+    { ref:'Refeição livre moderada · 12:00', nome:'Almoço livre (controlado)', itens:[
+      {i:'Refeição de preferência', q:'porção normal — sem exagero'},
+      {i:'Priorize proteína no prato', q:'sempre'},
+      {i:'Evite refrigerante e fritura', q:'regra de ouro'},
+    ], kcal:'~700 kcal', cor:'var(--accent)'},
+    { ref:'Refeição 3 · 19:00', nome:'Jantar leve', itens:[
+      {i:'Ovo cozido', q:'3 unidades'},
+      {i:'Atum + salada', q:'1 lata + vegetais'},
+      {i:'Azeite + limão', q:'temperar'},
+    ], kcal:'~320 kcal', cor:'var(--purple)'},
+  ],
+};
+
+function initDieta() {
+  const today = new Date().getDay();
+  const map = [6,0,1,2,3,4,5];
+  const todayIdx = map[today];
+  const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  let tabs = '';
+  dias.forEach((d,i) => {
+    tabs += `<div class="day-tab${i===todayIdx?' active':''}" onclick="showDieta('${d}',this)">${d}</div>`;
+  });
+  document.getElementById('dieta-tabs').innerHTML = tabs;
+  showDietaData(dias[todayIdx]);
+}
+
+function showDieta(dia, el) {
+  document.querySelectorAll('#dieta-tabs .day-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  showDietaData(dia);
+}
+
+function showDietaData(dia) {
+  const refeicoes = CARDAPIO[dia];
+  let html = '';
+  refeicoes.forEach(r => {
+    let itensHtml = r.itens.map(it =>
+      `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <span style="color:var(--text)">${it.i}</span>
+        <span style="color:var(--muted);flex-shrink:0;margin-left:12px">${it.q}</span>
+      </div>`
+    ).join('');
+    html += `<div class="card" style="border-left:3px solid ${r.cor}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)">${r.ref}</div>
+          <div style="font-size:16px;font-weight:600;color:var(--text);margin-top:2px">${r.nome}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:${r.cor};background:rgba(255,255,255,0.06);padding:4px 10px;border-radius:20px">${r.kcal}</div>
+      </div>
+      ${itensHtml}
+    </div>`;
+  });
+  document.getElementById('dieta-content').innerHTML = html;
+}
+
+// chamar initDieta no load
+document.addEventListener('DOMContentLoaded', () => { initDieta(); }, false);
+const _origSalvarPaginas = salvarPaginas;
+salvarPaginas = function() {
+  const n = parseInt(document.getElementById('inp-paginas').value);
+  if (!n || n < 1) { showToast('Informe as páginas!'); return; }
+  let hoje = load('livros_hoje_'+todayKey(), 0);
+  hoje += n;
+  save('livros_hoje_'+todayKey(), hoje);
+  _origSalvarPaginas();
+};
+</script>
+</body>
+</html>
